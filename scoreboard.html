@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Import Montserrat font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;  
+            margin: 0;
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 500; 
+            background-color: #203BA7;
+        }
+
+        #body-container {
+            width: 100%;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;  
+        }
+
+        #title {
+            margin-top: 20px;
+            background-color: #fff;
+            color: #333333;
+            width: 200px;
+            padding: 10px;
+            font-size: 32px;
+            text-align: center;
+            font-weight: 800;
+            border-radius: 3px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        #top-scorer {
+            width: 70vw;
+            height: 60vh;
+            margin-top: 5vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden; 
+            position: relative;
+            padding-top: 50px;
+        }
+
+        #scoreboard-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        #pagination {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            margin-bottom: 20px; /* Ensure space below pagination */
+        }
+
+        #top-scorer #pagination button {
+            font-size: 24px;
+            padding: 10px;
+            background-color: #203BA7;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #top-scorer #pagination button:focus {
+            outline: none;
+        }
+
+        #top-scorer #pagination button:hover {
+            background-color: #062361;
+        }
+
+        #top-scorer .scorer-info:first-child {
+            color: #333; 
+            background-color: #fff; 
+        }
+
+        #top-scorer .scorer-info:not(:first-child) {
+            color: #fff; 
+            background-color: #062361; 
+        }
+
+        #top-scorer .scorer-info:first-child .image-container {
+            background-color: #E9E9E9;
+        }
+
+        #top-scorer .scorer-info:not(:first-child) .image-container {
+            background-color: #062057; 
+        }
+
+        #top-scorer .scorer-info {
+            width: 80%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            position: relative; 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .image-container {
+            width: 80px;
+            height: 100%;
+            border-radius: 8px; 
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #top-scorer img {
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+
+        #top-scorer .name {
+            margin-left: 20px; 
+            font-size: 24px;
+        }
+
+        #top-scorer .score {
+            position: absolute; 
+            right: 25px; 
+            font-size: 24px;
+        }
+
+        #page-indicator {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        #footer {
+            width: 100%;
+            height: 50px;
+            background-color: #0F1B4D;
+            position: fixed; 
+            bottom: 0;  
+            left: 0;  
+            z-index: 1000; 
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        #footer span{
+            font-size: 14px;
+            color: #fff;
+        }
+
+        #footer .home-link {
+            margin-left: auto;  
+            margin-right: 40px;  
+            text-decoration: none; 
+            color: #fff;  
+            font-size: 14px;
+        }
+
+        #footer .home-link:hover {
+            text-decoration: underline;  
+        }
+    </style>
+</head>
+<body>
+    <div id="body-container">
+        <div id="title">
+            Scoreboard
+        </div>
+        <div id="top-scorer">
+            <!-- This is where the scoreboard list will dynamically load -->
+            <div id="scoreboard-list">
+                <!-- Scorer info will be dynamically inserted here -->
+            </div>
+
+            <div id="page-indicator">Page 1 of 2</div>
+
+            <div id="pagination">
+                <button id="left-arrow" onclick="showPrevious()">&lt;</button>
+                <button id="right-arrow" onclick="showNext()">&gt;</button>
+            </div>
+        </div>
+
+        <div id="footer">
+            <span>Copyright &copy; Catado, Mary Amiel Riva U.</span>
+            <a class="home-link" href="index.html">Back to Home Page</a>
+        </div>
+    </div>
+
+    <!-- External JavaScript File -->
+    <script src="scoreboard.js"></script>
+</body>
+</html>

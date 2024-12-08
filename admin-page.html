@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Import Montserrat font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif; /* Set global font */
+            font-weight: 500; /* Set font weight to medium */
+            display: flex;
+            flex-direction: column; /* Arrange items in a column */
+            justify-content: center;
+            align-items: center;
+            background-color: #46178F;
+        }
+
+        /* Create a div for h1 and center it above the form */
+        #header {
+            text-align: center;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 36px;
+        }
+
+        #form-container {
+            width: 20vw;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            text-align: center; /* Center the contents inside the form container */
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        p {
+            font-size: 14px;
+            margin: 0;
+            color: #333333;
+        }
+
+        input {
+            margin: 5px 0;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+            transition: all 0.3s ease-in-out;
+            text-align: center; /* Center the text inside the input */
+        }
+
+        /* Style the placeholder text */
+        input::placeholder {
+            color: #B2B2B2; /* Set placeholder text color */
+            text-align: center; /* Center the placeholder text */
+        }
+
+        input:focus {
+            border-color: #727272;
+            outline: none;
+        }
+
+        .button-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"] {
+            background-color: #333333;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #262626;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            color: #6200ea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6200ea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            #form-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Separate div for h1, centered above the form -->
+    <div id="header">
+        <h1>CodeQuiz!</h1>
+    </div>
+
+    <div id="form-container">
+        <form id="login-form" method="POST">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <div class="button-container">
+                <button type="submit">Log in</button>
+            </div>
+
+            <div class="register-link">
+                <p>Log in as player <a href="index.html"> here</a></p>
+            </div>
+        </form>
+    </div>
+
+    <div id="loader" class="loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Select the login form and inputs
+        const loginForm = document.getElementById("login-form");
+        const username = document.getElementById("username");
+        const password = document.getElementById("password");
+        const loader = document.getElementById("loader");
+
+        // Admin credentials (for demo purposes, not for production use)
+        const adminUser = "admin";
+        const adminPass = "pass123";
+
+        // Check if the username and password are stored in localStorage
+        if (!localStorage.getItem("username") || !localStorage.getItem("password")) {
+            localStorage.setItem("username", adminUser);
+            localStorage.setItem("password", adminPass);
+        }
+
+        // Event listener for form submission
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();  // Prevent the form from reloading the page
+
+            // Get the input values
+            const inputUsername = username.value.trim();
+            const inputPassword = password.value.trim();
+
+            // Debugging: Log the input values
+            console.log("Input Username: ", inputUsername);
+            console.log("Input Password: ", inputPassword);
+
+            // Validate input values
+            if (!inputUsername || !inputPassword) {
+                alert("Please enter both username and password.");
+                return; // Exit if fields are empty
+            }
+
+            try {
+                // Show the loader
+                loader.style.display = "flex";
+
+                // Simulate a delay (e.g., API call)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Debugging: Log stored credentials
+                console.log("Stored Username: ", localStorage.getItem("username"));
+                console.log("Stored Password: ", localStorage.getItem("password"));
+
+                // Check if the entered username and password match the localStorage values
+                if (inputUsername === localStorage.getItem("username") && inputPassword === localStorage.getItem("password")) {
+                    // Hide the loader
+                    loader.style.display = "none";
+                    // Redirect to dashboard.html
+                    window.location.href = "dashboard.html";
+                } else {
+                    // Hide the loader
+                    loader.style.display = "none";
+                    // If they do not match, show an alert with an error message
+                    alert("Incorrect username or password. Please try again.");
+                }
+            } catch (error) {
+                // Hide the loader if there is an error
+                loader.style.display = "none";
+                console.error("An error occurred during the login process:", error);
+                alert("Something went wrong. Please try again later.");
+            }
+        });
+    </script>
+</body>
+</html>

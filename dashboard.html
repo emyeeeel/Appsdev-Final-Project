@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%; 
+            margin: 0; 
+            font-family: 'Montserrat', sans-serif; /* Set global font */
+            font-weight: 500; /* Set font weight to medium */
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            background-color: #f0f4f8; 
+        }
+
+        #header-container {
+            width: 100%;
+            height: 10%;
+            background-color: white;
+            padding: 15px 30px;
+            color: #6200ea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 1000; 
+        }
+
+        #header-container h1 {
+            margin: 0; 
+            font-size: 24px; 
+            color: #6200ea; 
+        }
+
+        #header-container span {
+            font-size: 16px; 
+        }
+
+        #header-container form {
+            margin: 0; 
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="button"] {
+            background-color: #6200ea;
+            color: white;
+        }
+
+        button[type="button"]:hover {
+            background-color: #3700b3;
+        }
+
+        .table-container {
+            width: 80%;
+            max-width: 1200px; 
+            margin: 160px auto 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .table-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #6200ea;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #6200ea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons button {
+            padding: 6px 12px;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .action-buttons button:hover {
+            background-color: #3700b3;
+        }
+
+        .action-buttons .edit-btn {
+            background-color: #03a9f4;
+        }
+
+        .action-buttons .delete-btn {
+            background-color: #f44336;
+        }
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6200ea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            #form-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container">
+        <h1>Admin Dashboard</h1>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span>Welcome, admin</span>
+            <form method="POST" id="logout-form">
+                <button type="button" onclick="logout()">Log Out</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-title">Users List</div>
+
+        <table id="users-table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Full Name</th>
+                    <th>Time Taken</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="loader" class="loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+
+        function logout() {
+            // Show the loader
+            loader.style.display = "flex"; // Make sure the loader shows up
+
+            console.log("Loader shown");
+
+            // Wait for a moment before redirecting
+            setTimeout(function() {
+                loader.style.display = "none"; // Hide the loader
+                console.log("Redirecting...");
+                window.location.href = "admin-page.html";  
+            }, 2000); // Give a small delay before redirecting
+        }
+        // Helper function to format time (in seconds) to mm:ss
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60); // Get the minutes
+            const remainingSeconds = seconds % 60; // Get the remaining seconds
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+    
+        // Use Axios to fetch users from the PHP API
+        axios.get('users.php')
+            .then(function (response) {
+                // Assuming response.data is the array of users
+                const users = response.data;
+    
+                // Get the table body element
+                const tableBody = document.querySelector('#users-table tbody');
+    
+                // Loop through the users and create a table row for each user
+                users.forEach(function(user) {
+                    // Create a new row
+                    const row = document.createElement('tr');
+    
+                    // Format the time in seconds as mm:ss
+                    const formattedTime = formatTime(user.time);
+    
+                    // Create and append each cell (td) in the row
+                    row.innerHTML = `
+                        <td>${user.student_id}</td>
+                        <td>${user.name}</td>
+                        <td>${formattedTime}</td>
+                        <td>${user.score}/20</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn" data-student-id="${user.student_id}" data-name="${user.name}">Delete</button>
+                        </td>
+                    `;
+    
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                });
+    
+            // Add event listener to all delete buttons
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    // Get the student_id and name from the button's data attributes
+                    const studentId = button.getAttribute('data-student-id');
+                    const name = button.getAttribute('data-name');
+
+                    // Send a POST request to delete the user
+                    axios.post('users.php', {
+                        student_id: studentId,
+                        name: name
+                    })
+                    .then(function(response) {
+                        console.log(response.data);
+                        // Check if the deletion was successful
+                        if (response.data.success) {
+                            // Remove the row from the table only after success
+                            button.closest('tr').remove();
+                        } else {
+                            // If there's an error, show an alert
+                            alert('Error deleting user: ' + response.data.error);
+                        }
+                    })
+                    .catch(function(error) {
+                        // Hide the loader in case of an error
+                        document.getElementById("loader").style.display = "none";
+
+                        console.error('Error while deleting:', error);
+                        alert('Error deleting user.');
+                    });
+                });
+            });
+        })
+        .catch(function (error) {
+            console.error("There was an error fetching the data:", error);
+        });
+    </script>
+    
+</body>
+</html>

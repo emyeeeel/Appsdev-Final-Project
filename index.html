@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Import Montserrat font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 500; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            background-color: #46178F;
+        }
+
+        #header {
+            text-align: center;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 36px;
+        }
+
+        #form-container {
+            width: 20vw;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            text-align: center; 
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        p {
+            font-size: 14px;
+            margin: 0;
+            color: #333333;
+        }
+
+        input {
+            margin: 5px 0;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+            transition: all 0.3s ease-in-out;
+            text-align: center; 
+        }
+
+        input::placeholder {
+            color: #B2B2B2; 
+            text-align: center; 
+        }
+
+        input:focus {
+            border-color: #727272;
+            outline: none;
+        }
+
+        .button-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"] {
+            background-color: #333333;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #262626;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-link a {
+            color: #6200ea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6200ea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            #form-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>CodeQuiz!</h1>
+    </div>
+
+    <div id="form-container">
+        <form id="login-form" method="POST">
+            <input type="text" id="student-id" name="student-id" placeholder="Student ID" required>
+            <input type="text" id="full-name" name="full-name" placeholder="Full Name" required>
+            <div class="button-container">
+                <button type="submit">Ok, go!</button>
+            </div>
+
+            <div class="register-link">
+                <p>Log in as admin <a href="admin-page.html"> here</a></p>
+            </div>
+        </form>
+    </div>
+
+    <div id="loader" class="loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Clear storage
+        localStorage.clear()
+
+        // Wait until the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select the login form and inputs
+            const loginForm = document.getElementById("login-form");
+            const studentIdInput = document.getElementById("student-id");
+            const fullNameInput = document.getElementById("full-name");
+            const loader = document.getElementById("loader");
+
+            // Event listener for form submission
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();  // Prevent the form from reloading the page
+
+                // Store user info in local storage
+                const studentId = studentIdInput.value;
+                const fullName = fullNameInput.value;
+                localStorage.setItem("student-id", studentId);
+                localStorage.setItem("full-name", fullName);
+                localStorage.setItem('currentQuestionIndex', 0);
+                localStorage.setItem('userScore', 0);
+
+                try {
+                    // Show the loader
+                    loader.style.display = "flex"; // Make sure the loader shows up
+
+                    console.log("Loader shown");
+
+                    // Wait for a moment before redirecting
+                    setTimeout(function() {
+                        loader.style.display = "none"; // Hide the loader
+                        console.log("Redirecting...");
+                        window.location.href = "display-questions.html";  
+                    }, 2000); // Give a small delay before redirecting
+
+                } catch (error) {
+                    loader.style.display = "none"; // Hide the loader if there's an error
+                    console.error("Error during login request:", error);
+                    alert("There was an error processing your request. Please try again.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
