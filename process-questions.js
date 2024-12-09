@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentUserDiv.textContent = `User: ${localStorage.getItem('full-name')}`;
 
     // Initialize timer variables
-    let seconds = 0;
+    let seconds = 1780;
     let minutes = 0;
 
     // Retrieve saved timer data from localStorage (if any)
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 const fetchQuestions = async () => {
     try {
         const response = await axios.get('get-questions.php');
-        const randomIndices = generateRandomIndices(20, 1, 50);
+        const randomIndices = generateRandomIndices(5, 1, 50);
 
         return randomIndices.map(index => {
             const questionData = response.data[index - 1];

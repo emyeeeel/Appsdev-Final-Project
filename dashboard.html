@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -197,7 +197,6 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Rows will be inserted here dynamically -->
             </tbody>
         </table>
     </div>
@@ -208,24 +207,19 @@
 
     <script>
         function logout() {
-            // Show the loader
             loader.style.display = "flex"; 
-
-            // Wait for a moment before redirecting
             setTimeout(function() {
                 loader.style.display = "none"; 
                 window.location.href = "admin-page.html";  
-            }, 2000); // Delay before redirecting
+            }, 2000); 
         }
 
-        // Helper function to format time (in seconds) to mm:ss
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60); 
             const remainingSeconds = seconds % 60;
             return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
         }
 
-        // Use Axios to fetch users from the PHP API
         axios.get('users.php')
             .then(function (response) {
                 const users = response.data;
@@ -247,23 +241,19 @@
                     `;
                     tableBody.appendChild(row);
 
-                    // Add event listener for the Edit button
                     const editButton = row.querySelector('.edit-btn');
                     editButton.addEventListener('click', function() {
-                        // Store row data in localStorage
                         localStorage.setItem('userData', JSON.stringify(user));
-                        // Redirect to edit-user.html
                         window.location.href = "edit-user.html";
                     });
                 });
 
-                // Add event listener for the Delete buttons
                 const deleteButtons = document.querySelectorAll('.delete-btn');
                 deleteButtons.forEach(function(button) {
                     button.addEventListener('click', function() {
                         const studentId = button.getAttribute('data-student-id');
                         const name = button.getAttribute('data-name');
-
+                        
                         axios.post('users.php', { student_id: studentId, name: name })
                             .then(function(response) {
                                 if (response.data.success) {

@@ -5,24 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <!-- Import Montserrat font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
-
     <style>
         body, html {
             height: 100%;
             margin: 0;
-            font-family: 'Montserrat', sans-serif; /* Set global font */
-            font-weight: 500; /* Set font weight to medium */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
             display: flex;
-            flex-direction: column; /* Arrange items in a column */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: #46178F;
         }
 
-        /* Create a div for h1 and center it above the form */
         #header {
             text-align: center;
         }
@@ -39,7 +35,7 @@
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #e0e0e0;
-            text-align: center; /* Center the contents inside the form container */
+            text-align: center;
         }
 
         label {
@@ -63,13 +59,12 @@
             border-radius: 3px;
             box-sizing: border-box;
             transition: all 0.3s ease-in-out;
-            text-align: center; /* Center the text inside the input */
+            text-align: center;
         }
 
-        /* Style the placeholder text */
         input::placeholder {
-            color: #B2B2B2; /* Set placeholder text color */
-            text-align: center; /* Center the placeholder text */
+            color: #B2B2B2;
+            text-align: center;
         }
 
         input:focus {
@@ -154,8 +149,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Separate div for h1, centered above the form -->
     <div id="header">
         <h1>CodeQuiz!</h1>
     </div>
@@ -179,65 +172,43 @@
     </div>
 
     <script>
-        // Select the login form and inputs
         const loginForm = document.getElementById("login-form");
         const username = document.getElementById("username");
         const password = document.getElementById("password");
         const loader = document.getElementById("loader");
 
-        // Admin credentials (for demo purposes, not for production use)
         const adminUser = "admin";
         const adminPass = "pass123";
 
-        // Check if the username and password are stored in localStorage
         if (!localStorage.getItem("username") || !localStorage.getItem("password")) {
             localStorage.setItem("username", adminUser);
             localStorage.setItem("password", adminPass);
         }
 
-        // Event listener for form submission
         loginForm.addEventListener("submit", async (e) => {
-            e.preventDefault();  // Prevent the form from reloading the page
+            e.preventDefault();
 
-            // Get the input values
             const inputUsername = username.value.trim();
             const inputPassword = password.value.trim();
 
-            // Debugging: Log the input values
-            console.log("Input Username: ", inputUsername);
-            console.log("Input Password: ", inputPassword);
-
-            // Validate input values
             if (!inputUsername || !inputPassword) {
                 alert("Please enter both username and password.");
-                return; // Exit if fields are empty
+                return;
             }
 
             try {
-                // Show the loader
                 loader.style.display = "flex";
 
-                // Simulate a delay (e.g., API call)
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
-                // Debugging: Log stored credentials
-                console.log("Stored Username: ", localStorage.getItem("username"));
-                console.log("Stored Password: ", localStorage.getItem("password"));
-
-                // Check if the entered username and password match the localStorage values
                 if (inputUsername === localStorage.getItem("username") && inputPassword === localStorage.getItem("password")) {
-                    // Hide the loader
                     loader.style.display = "none";
-                    // Redirect to dashboard.html
                     window.location.href = "dashboard.html";
                 } else {
-                    // Hide the loader
                     loader.style.display = "none";
-                    // If they do not match, show an alert with an error message
                     alert("Incorrect username or password. Please try again.");
                 }
             } catch (error) {
-                // Hide the loader if there is an error
                 loader.style.display = "none";
                 console.error("An error occurred during the login process:", error);
                 alert("Something went wrong. Please try again later.");
