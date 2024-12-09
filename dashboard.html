@@ -10,8 +10,8 @@
             width: 100%;
             height: 100%; 
             margin: 0; 
-            font-family: 'Montserrat', sans-serif; /* Set global font */
-            font-weight: 500; /* Set font weight to medium */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500; 
             display: flex; 
             flex-direction: column; 
             justify-content: flex-start; 
@@ -137,6 +137,7 @@
         .action-buttons .delete-btn {
             background-color: #f44336;
         }
+
         .loader {
             position: fixed;
             top: 0;
@@ -206,45 +207,34 @@
     </div>
 
     <script>
-
         function logout() {
             // Show the loader
-            loader.style.display = "flex"; // Make sure the loader shows up
-
-            console.log("Loader shown");
+            loader.style.display = "flex"; 
 
             // Wait for a moment before redirecting
             setTimeout(function() {
-                loader.style.display = "none"; // Hide the loader
-                console.log("Redirecting...");
+                loader.style.display = "none"; 
                 window.location.href = "admin-page.html";  
-            }, 2000); // Give a small delay before redirecting
+            }, 2000); // Delay before redirecting
         }
+
         // Helper function to format time (in seconds) to mm:ss
         function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60); // Get the minutes
-            const remainingSeconds = seconds % 60; // Get the remaining seconds
+            const minutes = Math.floor(seconds / 60); 
+            const remainingSeconds = seconds % 60;
             return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
         }
-    
+
         // Use Axios to fetch users from the PHP API
         axios.get('users.php')
             .then(function (response) {
-                // Assuming response.data is the array of users
                 const users = response.data;
-    
-                // Get the table body element
                 const tableBody = document.querySelector('#users-table tbody');
     
-                // Loop through the users and create a table row for each user
                 users.forEach(function(user) {
-                    // Create a new row
                     const row = document.createElement('tr');
-    
-                    // Format the time in seconds as mm:ss
                     const formattedTime = formatTime(user.time);
-    
-                    // Create and append each cell (td) in the row
+
                     row.innerHTML = `
                         <td>${user.student_id}</td>
                         <td>${user.name}</td>
@@ -255,49 +245,42 @@
                             <button class="delete-btn" data-student-id="${user.student_id}" data-name="${user.name}">Delete</button>
                         </td>
                     `;
-    
-                    // Append the row to the table body
                     tableBody.appendChild(row);
-                });
-    
-            // Add event listener to all delete buttons
-            const deleteButtons = document.querySelectorAll('.delete-btn');
-            deleteButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    // Get the student_id and name from the button's data attributes
-                    const studentId = button.getAttribute('data-student-id');
-                    const name = button.getAttribute('data-name');
 
-                    // Send a POST request to delete the user
-                    axios.post('users.php', {
-                        student_id: studentId,
-                        name: name
-                    })
-                    .then(function(response) {
-                        console.log(response.data);
-                        // Check if the deletion was successful
-                        if (response.data.success) {
-                            // Remove the row from the table only after success
-                            button.closest('tr').remove();
-                        } else {
-                            // If there's an error, show an alert
-                            alert('Error deleting user: ' + response.data.error);
-                        }
-                    })
-                    .catch(function(error) {
-                        // Hide the loader in case of an error
-                        document.getElementById("loader").style.display = "none";
-
-                        console.error('Error while deleting:', error);
-                        alert('Error deleting user.');
+                    // Add event listener for the Edit button
+                    const editButton = row.querySelector('.edit-btn');
+                    editButton.addEventListener('click', function() {
+                        // Store row data in localStorage
+                        localStorage.setItem('userData', JSON.stringify(user));
+                        // Redirect to edit-user.html
+                        window.location.href = "edit-user.html";
                     });
                 });
+
+                // Add event listener for the Delete buttons
+                const deleteButtons = document.querySelectorAll('.delete-btn');
+                deleteButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const studentId = button.getAttribute('data-student-id');
+                        const name = button.getAttribute('data-name');
+
+                        axios.post('users.php', { student_id: studentId, name: name })
+                            .then(function(response) {
+                                if (response.data.success) {
+                                    button.closest('tr').remove();
+                                } else {
+                                    alert('Error deleting user: ' + response.data.error);
+                                }
+                            })
+                            .catch(function(error) {
+                                alert('Error deleting user.');
+                            });
+                    });
+                });
+            })
+            .catch(function (error) {
+                console.error("There was an error fetching the data:", error);
             });
-        })
-        .catch(function (error) {
-            console.error("There was an error fetching the data:", error);
-        });
     </script>
-    
 </body>
 </html>
